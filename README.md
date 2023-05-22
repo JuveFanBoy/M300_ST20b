@@ -2,6 +2,8 @@
 # M300_ST20b
 # Inhaltsverzeichnis
 
+#Aufgabenstellung
+Clients, Server (File, Print, DNS, DHCP, Directory Services, Terminal, SSH, Web) und Peripherie mit unterschiedlichen Betriebssystemen in einem einfachen Netzwerk.
 
 Ubuntu Client 
 User: leaben
