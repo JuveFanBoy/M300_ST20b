@@ -1,4 +1,4 @@
-![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/1a643422-50b1-417a-94e1-84046cd01068)
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/6950d4a0-deed-4ec6-aca5-6b84584c0f3f)
 # M300_ST20b
 # Inhaltsverzeichnis
 
