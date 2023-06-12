@@ -5,6 +5,9 @@
 # Einführung
 Im Modul 300 geht es darum, eine Service Umgebung völlig automatisiert zu erstellen. Dies bietet viele Vorteile und spart im End-Effekt viel Zeit. Ich habe mich hierbei bei einem Kollegen von der Parallelklasse inspiriert. Also beschloss ich es Ihm ähnlich zu machen, dabei hatte ich immer das Ziel im Hintergrund nicht jemanden zu kopieren und nicht eigene Ideen einzubringen. Meine Idee war also, Eine Ubuntu VM mit einer Umgebung bestehend aus einem Webserver worauf eine Monitoring Software läuft. Diese Website ist auch je nach Zeit beliebig erweiterbar mit zb. einer Datenbank. 
 
+#Aufgretene Probleme
+-SSH Connection falsche IP 
+-Ausgehende Verbindung Rule blockiert installation von Programmen
 Ubuntu Client 
 User: leaben
 pw: Admin1234!
