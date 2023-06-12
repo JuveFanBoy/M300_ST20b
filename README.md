@@ -2,8 +2,8 @@
 # M300_ST20b
 # Inhaltsverzeichnis
 
-# Aufgabenstellung
-Clients, Server (File, Print, DNS, DHCP, Directory Services, Terminal, SSH, Web) und Peripherie mit unterschiedlichen Betriebssystemen in einem einfachen Netzwerk.
+# Einführung
+Im Modul 300 geht es darum, eine Service Umgebung völlig automatisiert zu erstellen. Dies bietet viele Vorteile und spart im End-Effekt viel Zeit. Ich habe mich hierbei bei einem Kollegen von der Parallelklasse inspiriert. Also beschloss ich es Ihm ähnlich zu machen, dabei hatte ich immer das Ziel im Hintergrund nicht jemanden zu kopieren und nicht eigene Ideen einzubringen. Meine Idee war also, Eine Ubuntu VM mit einer Umgebung bestehend aus einem Webserver worauf eine Monitoring Software läuft. Diese Website ist auch je nach Zeit beliebig erweiterbar mit zb. einer Datenbank. 
 
 Ubuntu Client 
 User: leaben
