@@ -16,10 +16,10 @@ Um auf die erstellte Umgebung Zugreifen zu können, kann ich auf dem Host-System
 Damit die Umgebung aber überhaupt funktioniert, 
 
 ```
-function test() {
-  console.log("This code will have a copy button to the right of it");
-}
+cd ~/Desktop/Modul-to-Upload/Modul\ 300/myvagrant/
 ```
+```
+Vagrant up```
 
 #Aufgretene Probleme
 -SSH Connection falsche IP 
