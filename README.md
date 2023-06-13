@@ -13,6 +13,13 @@ Um sich die Umgebung besser Vorstellen zu können:
 
 Um auf die erstellte Umgebung Zugreifen zu können, kann ich auf dem Host-System https://localhost:3346 öffnen. 
 
+Damit die Umgebung aber überhaupt funktioniert, 
+
+```
+function test() {
+  console.log("This code will have a copy button to the right of it");
+}
+```
 
 #Aufgretene Probleme
 -SSH Connection falsche IP 
