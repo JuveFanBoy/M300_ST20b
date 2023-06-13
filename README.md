@@ -13,13 +13,16 @@ Um sich die Umgebung besser Vorstellen zu können:
 
 Um auf die erstellte Umgebung Zugreifen zu können, kann ich auf dem Host-System https://localhost:3346 öffnen. 
 
-Damit die Umgebung aber überhaupt funktioniert, 
+Damit die Umgebung aber überhaupt funktioniert, muss man Zuerst im Gitbash das entsprechende Skript ausführen. 
 
+Dafür wechsel ich in mein persönliches verzeichnis mit dem Vagrant file.
 ```
-cd ~/Desktop/Modul-to-Upload/Modul\ 300/myvagrant/
+$ cd ~/Desktop/Modul-to-Upload/Modul\ 300/myvagrant/
 ```
+Und lasse die Umgebung nach dem Vagrant file erstellen. 
 ```
-Vagrant up```
+$ Vagrant up
+```
 
 #Aufgretene Probleme
 -SSH Connection falsche IP 
