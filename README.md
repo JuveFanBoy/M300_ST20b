@@ -24,6 +24,17 @@ Und lasse die Umgebung nach dem Vagrant file erstellen.
 $ Vagrant up
 ```
 
+Nach etwa 5 min ist die Umgebung kreirt und man kann im Gitbash per SSH zugreifen. 
+```
+$ Vagrant ssh
+```
+
+Weitere wichtige Befehle sind: 
+```
+$ Vagrant status    #Status der VM
+$ Vagrant halt      #pausieren der VM
+$ Vagrant destory   #Löschen der VM
+```
 #Aufgretene Probleme
 -SSH Connection falsche IP 
 -Ausgehende Verbindung Rule blockiert installation von Programmen
