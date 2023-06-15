@@ -1,17 +1,19 @@
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/3d84a856-acea-49f1-832e-f40975698ae6)
 # M300_ST20b
 # Inhaltsverzeichnis
-1. [Einleitung](#einleitung)
-1. [Hauptteil](#hauptteil)
+1. [Einführung](#einleitung)
+	1. [Systemumgebung](#Systemumgebung)
+3. [Hauptteil](#hauptteil)
 	1. [Thema 1](#thema1)
 	1. [Thema 2](#thema2)
 	1. [Thema 3](#thema3)	
-1. [Schluß](#skript)
+4. [Schluß](#skript)
 # Einführung
 
 
 Im Modul 300 geht es darum, eine Service Umgebung völlig automatisiert zu erstellen. Dies bietet viele Vorteile und spart im End-Effekt viel Zeit. Ich habe mich hierbei bei einem Kollegen von der Parallelklasse inspiriert. Also beschloss ich es Ihm ähnlich zu machen, dabei hatte ich immer das Ziel im Hintergrund nicht jemanden zu kopieren und nicht eigene Ideen einzubringen. Meine Idee war also, Eine Ubuntu VM mit einer Umgebung bestehend aus einem Webserver worauf eine Monitoring Software läuft. Diese Website ist auch je nach Zeit beliebig erweiterbar mit zb. einer Datenbank. 
 
+# Systemumgebung
 Um sich die Umgebung besser Vorstellen zu können: 
 
 ![M300_Systemumgebung](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/e01cc04c-293e-4a71-a8c4-2adc107539fe)
