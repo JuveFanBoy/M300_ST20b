@@ -3,7 +3,7 @@
 # Inhaltsverzeichnis
 1. [Einführung](#einleitung)
 	1. [Systemumgebung](#Systemumgebung)
-3. [VAGRANT File](#VAGRANT)
+3. [VAGRANT-File](#VAGRANT-File)
 	1. [Thema 1](#thema1)
 	1. [Thema 2](#thema2)
 	1. [Thema 3](#thema3)	
@@ -45,7 +45,7 @@ $ Vagrant halt      #pausieren der VM
 $ Vagrant destory   #Löschen der VM
 ```
 
-# VAGRANT File
+# VAGRANT-File
 ```
 #Erstellung VM 
 time_zone = "Europe/Zurich"
