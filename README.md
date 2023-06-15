@@ -43,6 +43,8 @@ Weitere wichtige Befehle sind:
 $ Vagrant status    #Status der VM
 $ Vagrant halt      #pausieren der VM
 $ Vagrant destory   #Löschen der VM
+$ sudo su -p        #Wechsel zu "Root" User
+$ sudo su <user>    #Wechsel zu beliebigem User
 ```
 
 # VAGRANT-File
@@ -233,7 +235,10 @@ SHELL
   end
 end
 ```
-#Aufgretene Probleme
+# Endstand 
+Das Skript erstellt ein Umbuntu Client worauf diverse Dienste laufen. Es wird ein Apache Service kreirt der auf https://localhost:3446 läuft. Darauf findet man eine Übersicht von zum einen ein Monitoring Service und ein Adminer SQL Datenbank. Zudem werden ein normaler User und ein Root User erstellt. Im hintergrund werden zusätzlich einige Security Features wie Firewall Rules & Reverse Proxy. Am Ende wird an der Konsole die benötigte Deploy Zeit ausgegeben und man kann ich auf die Umgebung verbinden. 
+
+# Aufgretene Probleme
 -SSH Connection falsche IP 
 -Ausgehende Verbindung Rule blockiert installation von Programmen
 <img width="328" alt="image" src="https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/4b2a0eec-c785-46f4-bd5b-6d3fe4bff553">
