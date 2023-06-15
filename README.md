@@ -6,7 +6,7 @@
 	1. [Thema 1](#thema1)
 	1. [Thema 2](#thema2)
 	1. [Thema 3](#thema3)	
-1. [Schluß](#schluss)
+1. [Schluß](#skript)
 # Einführung
 
 
@@ -43,7 +43,7 @@ $ Vagrant halt      #pausieren der VM
 $ Vagrant destory   #Löschen der VM
 ```
 
-Skript
+# Skript
 ```
 #Erstellung VM 
 time_zone = "Europe/Zurich"
