@@ -11,6 +11,8 @@ Um sich die Umgebung besser Vorstellen zu können:
 
 ![M300_Systemumgebung](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/e01cc04c-293e-4a71-a8c4-2adc107539fe)
 
+![M300_Systemumgebung](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/9a771739-2d7b-4b1e-9677-7870d9ace3bb)
+
 Um auf die erstellte Umgebung Zugreifen zu können, kann ich auf dem Host-System https://localhost:3346 öffnen. 
 
 Damit die Umgebung aber überhaupt funktioniert, muss man Zuerst im Gitbash das entsprechende Skript ausführen. 
