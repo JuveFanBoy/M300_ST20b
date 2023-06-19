@@ -14,6 +14,10 @@
 	1. [Reverse Proxy](#Reverse_Proxy)
 	1. [Adminer](#Adminer)
 	1. [OPcache](#OPcache)	
+5. [Persönlicher_Wissensstand](#Persönlicher_Wissensstand)
+6. [Wissenzuwachs](#Wissenszuwachs)
+7. [Reflexion](#Reflexion)
+
 # Einführung
 
 
@@ -286,14 +290,23 @@ Um immer ein Auge auf den Leistungs-Verbrauch zu haben, kann man die zweite Seit
 # Endstand 
 Das Skript erstellt ein Umbuntu Client worauf diverse Dienste laufen. Es wird ein Apache Service kreirt der auf https://localhost:3446 läuft. Darauf findet man eine Übersicht von zum einen ein Monitoring Service und ein Adminer SQL Datenbank. Zudem werden ein normaler User und ein Root User erstellt. Im hintergrund werden zusätzlich einige Security Features wie Firewall Rules & Reverse Proxy. Am Ende wird an der Konsole die benötigte Deploy Zeit ausgegeben und man kann ich auf die Umgebung verbinden. 
 
-# Aufgretene Probleme
--SSH Connection falsche IP 
--Ausgehende Verbindung Rule blockiert installation von Programmen
-<img width="328" alt="image" src="https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/4b2a0eec-c785-46f4-bd5b-6d3fe4bff553">
+# Aufgretene_Probleme
+1. SSH Connection, da falsche IP in der SSH Rule Angegeben
+Zu  beginn, war ich nicht sicher welche IP ich in der SSH Rule angeben musste. Nach gewissen rechechier-arbeiten, habe ich herausgefunden welche IP ich allowen soll.
+```sudo ufw allow from 10.0.2.2 to any port 22```
 
-Ubuntu Client 
-User: leaben
-pw: Admin1234!
-Hostname: M300-VM-Ubuntu
-Domain_Name: myguest.virtualbox.org
-computername: leaben-virtualbox
+2. Ausgehende Verbindung Rule blockiert installation von Programmen
+Beim durchgehen und konfigurieren der Firewall Rules, traten auf einmal Fehler bei der Installation von Services Auf. Daraufhin ging ich erstmalig davon aus, dass gewisse downloadslinks oder commands geändert haben. Nach langem testing und rumprobieren, kam ich zu dem Entschluss das es an diesen Rules läge. Ein gutes beispiel wenn man den wald vor lauter bäumen nicht sieht. 
+```
+$ sudo ufw deny out to any
+$ sudo ufw allow out 22/tcp 
+```
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/e4ae43c6-2be1-4508-a9ad-f45a5e5d7e13)
+
+# Persönlicher_Wissensstand
+
+# Wissenszuwachs
+
+# Reflexion
+
+
