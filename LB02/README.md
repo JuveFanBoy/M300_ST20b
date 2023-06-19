@@ -8,7 +8,7 @@
 	1. [Thema 2](#thema2)
 	1. [Thema 3](#thema3)	
 4. [Testing](#Testing)
-	1. [Deploy](#Deploy)
+	1. [Deploy](#Deploy_der_Umgebung)
 	1. [Startseite](#Startseite)
 	1. [Thema 3](#thema3)	
 # Einführung
@@ -237,13 +237,30 @@ end
 ```
 # Testing
 
-# Deploy der Umgebung 
+# Deploy_der_Umgebung 
 Nachdem man die Umgebung mit "Vagrant up" gestartet hat, bekommt man diesen kurzen Überblick und die Meldung das die Umgebung nun Verfügbar ist. 
 
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/3feb31cc-ebdc-4c11-a784-2ef827fa5564)
 
+# Firewall
+Im Vagrant-File habe ich konfiguration, dass nur meine eigene Client SSH Zugriff auf die VM bekommt, dazu habe ich den Port 80 geöffnet, sodass ich von meinem Client auf dem Port 3346 auf den Port 80 umgeleitet Zugriff auf den Apache Server bekomme. 
+Ob die im Vagrant-File hinterlegte Konfiguration auch ausgeführt wurde, überprüfen wir mit:
+
+```$ sudo ufw status```
+
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/3d52aa1a-e37b-4743-bde6-97d27e3381b2)
+
+# Reverse_Proxy
+Auch den Reverse Proxy können wir überprüfen mit: 
+
+
+```$ curl -i localhost:3346```
+
+Dies gibt an, dass die Verbindung erfolgreich war (HTTP/1.1 200 OK) und dass der Server Apache/2.4.29 (Ubuntu) verwendet wird
+
 # Startseite
-Um auf die generierte Umgebung zugreifen zu können öffnet man https://localhost:3346
+
+Um auf die generierte Umgebung zugreifen zu können öffnet man http://localhost:3346
 
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/13641ac1-b6ec-4a77-ae86-58e247418cc7)
 
