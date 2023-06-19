@@ -14,9 +14,8 @@
 	1. [Reverse Proxy](#Reverse_Proxy)
 	1. [Adminer](#Adminer)
 	1. [OPcache](#OPcache)	
-5. [Persönlicher_Wissensstand](#Persönlicher_Wissensstand)
-6. [Wissenzuwachs](#Wissenszuwachs)
-7. [Reflexion](#Reflexion)
+5. [Wissenzuwachs](#Wissenszuwachs)
+6. [Reflexion](#Reflexion)
 
 # Einführung
 
@@ -303,9 +302,14 @@ $ sudo ufw allow out 22/tcp
 ```
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/e4ae43c6-2be1-4508-a9ad-f45a5e5d7e13)
 
-# Persönlicher_Wissensstand
-
 # Wissenszuwachs
+_Vagrant kennengelernt
+_VM Konfiguration per Skript
+_Portforwarding Zugriff per Host
+_Firewall und Reverse Proxy auf Ubuntu Maschine
+_Automatisierung einer Umgebung per Skript
+
+
 
 # Reflexion
 
