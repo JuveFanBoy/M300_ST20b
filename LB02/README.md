@@ -8,7 +8,7 @@
 	1. [Thema 2](#thema2)
 	1. [Thema 3](#thema3)	
 4. [Testing](#Testing)
-	1. [Deploy](#Deploy der Umgebung )
+	1. [Deploy](#Deploy)
 	1. [Startseite](#Startseite)
 	1. [Thema 3](#thema3)	
 # Einführung
