@@ -8,8 +8,8 @@
 	1. [Thema 2](#thema2)
 	1. [Thema 3](#thema3)	
 4. [Testing](#Testing)
-	1. [Thema 1](#Startseite)
-	1. [Thema 2](#thema2)
+	1. [Deploy](#Deploy der Umgebung )
+	1. [Startseite](#Startseite)
 	1. [Thema 3](#thema3)	
 # Einführung
 
@@ -236,7 +236,13 @@ SHELL
 end
 ```
 # Testing
-	#Startseite
+
+# Deploy der Umgebung 
+Nachdem man die Umgebung mit "Vagrant up" gestartet hat, bekommt man diesen kurzen Überblick und die Meldung das die Umgebung nun Verfügbar ist. 
+
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/3feb31cc-ebdc-4c11-a784-2ef827fa5564)
+
+# Startseite
 Um auf die generierte Umgebung zugreifen zu können öffnet man https://localhost:3346
 
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/13641ac1-b6ec-4a77-ae86-58e247418cc7)
