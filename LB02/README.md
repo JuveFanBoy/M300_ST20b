@@ -7,16 +7,17 @@
 	1. [Thema 1](#thema1)
 	1. [Thema 2](#thema2)
 	1. [Thema 3](#thema3)	
-4. [Schluß](#skript)
+4. [Testing](#Testing)
+	1. [Thema 1](#Startseite)
+	1. [Thema 2](#thema2)
+	1. [Thema 3](#thema3)	
 # Einführung
 
 
-Im Modul 300 geht es darum, eine Service Umgebung völlig automatisiert zu erstellen. Dies bietet viele Vorteile und spart im End-Effekt viel Zeit. Ich habe mich hierbei bei einem Kollegen von der Parallelklasse inspiriert. Also beschloss ich es Ihm ähnlich zu machen, dabei hatte ich immer das Ziel im Hintergrund nicht jemanden zu kopieren und nicht eigene Ideen einzubringen. Meine Idee war also, Eine Ubuntu VM mit einer Umgebung bestehend aus einem Webserver worauf eine Monitoring Software läuft. Diese Website ist auch je nach Zeit beliebig erweiterbar mit zb. einer Datenbank. 
+Im Modul 300 geht es darum, eine Service Umgebung völlig automatisiert zu erstellen. Dies bietet viele Vorteile und spart im End-Effekt viel Zeit. Meine Idee war es mithilfe des Vagrant-Files ein Ubuntu Client generieren zu lassen, worauf ein Apache Webserver mit links zu zweier Service wie Datenbank & Monitoring Seiten.
 
 # Systemumgebung
 Um sich die Umgebung besser Vorstellen zu können: 
-
-![M300_Systemumgebung](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/e01cc04c-293e-4a71-a8c4-2adc107539fe)
 
 ![M300_Systemumgebung](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/9a771739-2d7b-4b1e-9677-7870d9ace3bb)
 
@@ -28,7 +29,7 @@ Dafür wechsel ich in mein persönliches verzeichnis mit dem Vagrant file.
 ```
 $ cd ~/Desktop/Modul-to-Upload/Modul\ 300/myvagrant/
 ```
-Und lasse die Umgebung nach dem Vagrant file erstellen. 
+Und lasse die Umgebung mithilfe des Vagrant-Files erstellen. 
 ```
 $ Vagrant up
 ```
@@ -68,13 +69,11 @@ Vagrant.configure("2") do |config| # Konfiguration der Vagrant-Box
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
 
-
 config.vm.provision "shell" do |s|
     s.args = [time_zone]
     s.inline = <<-SHELL  
 
-#Software und Sicherheits Konfiguration
-
+#Erstellung Zeitstempel für Zeittracking
 deploy_start_time=$(date +%s)
 
 sudo timedatectl set-timezone Europe/Zurich
@@ -87,8 +86,6 @@ sudo ufw allow from 10.0.2.2 to any port 22   # Port 22 (SSH) nur für den Host 
 sudo ufw allow 80    # Port 80 (HTTP) öffnen für alle
 sudo ufw status
 sudo systemctl start ssh
-
-
 
 #Sonstige Programme
 apt-get install -q -y vim git # Vim und Git installieren ins /var/www
@@ -105,7 +102,7 @@ sudo a2enmod proxy_balancer
 sudo a2enmod lbmethod_byrequests
 sudo systemctl restart apache2
 
-#Erstellung  Benutzer Leandro & User Root
+#Erstellung Benutzer Leandro 
 sudo useradd -m -s /bin/bash leandro  
 echo 'leandro:Admin1234!' | sudo chpasswd  
 
@@ -128,7 +125,6 @@ sudo chmod 600 /home/leandro/.ssh/authorized_keys
 # Optional: SSH-Zugriff für den Benutzer über Passwort aktivieren
 sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config  # Passwortauthentifizierung aktivieren
 sudo systemctl restart sshd  
-
 
 # Vagrant-Ordner als Apache-Root-Ordner festlegen und lokal speichern
 dir='/vagrant/www'
@@ -213,8 +209,12 @@ curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 sudo apt-get update && sudo apt-get install yarn
 
-#Entfernen des Standard Users
-#sudo userdel -r vagrant
+#Login für Adminer fürs GUI
+sudo mysql <<-EOF
+  create user 'leandro'@'localhost' identified by 'Admin1234!';
+  Grant all privileges on *.* to 'leandro'@'localhost';
+  Flush privileges;
+EOF
 
 #Erstellung Abgeschlossen
 echo "-------------------------------------------------------------"
@@ -235,6 +235,12 @@ SHELL
   end
 end
 ```
+# Testing
+	#Startseite
+Um auf die generierte Umgebung zugreifen zu können öffnet man https://localhost:3346
+
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/13641ac1-b6ec-4a77-ae86-58e247418cc7)
+
 # Endstand 
 Das Skript erstellt ein Umbuntu Client worauf diverse Dienste laufen. Es wird ein Apache Service kreirt der auf https://localhost:3446 läuft. Darauf findet man eine Übersicht von zum einen ein Monitoring Service und ein Adminer SQL Datenbank. Zudem werden ein normaler User und ein Root User erstellt. Im hintergrund werden zusätzlich einige Security Features wie Firewall Rules & Reverse Proxy. Am Ende wird an der Konsole die benötigte Deploy Zeit ausgegeben und man kann ich auf die Umgebung verbinden. 
 
