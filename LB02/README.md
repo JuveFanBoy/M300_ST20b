@@ -1,4 +1,5 @@
-[![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/3d84a856-acea-49f1-832e-f40975698ae6)](https://github.com/JuveFanBoy/M300_ST20b/blob/cc3a995a286ea5d63f6838d7868f0d5cc7f2760a/LB02/Bilder/Vagrant.png)
+
+](https://github.com/JuveFanBoy/M300_ST20b/blob/cc3a995a286ea5d63f6838d7868f0d5cc7f2760a/LB02/Bilder/Vagrant.png)
 # M300_ST20b
 # Inhaltsverzeichnis
 1. [Einführung](#einleitung)
