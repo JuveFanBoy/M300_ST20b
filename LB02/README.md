@@ -10,7 +10,10 @@
 4. [Testing](#Testing)
 	1. [Deploy](#Deploy_der_Umgebung)
 	1. [Startseite](#Startseite)
-	1. [Thema 3](#thema3)	
+	1. [Firewall](#Firewall)
+	1. [Reverse Proxy](#Reverse_Proxy)
+	1. [Adminer](#Adminer)
+	1. [OPcache](#OPcache)	
 # Einführung
 
 
@@ -255,14 +258,30 @@ Auch den Reverse Proxy können wir überprüfen mit:
 
 
 ```$ curl -i localhost:3346```
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/7f5749ae-e0c1-406e-a79d-198afb1f67a8)
 
-Dies gibt an, dass die Verbindung erfolgreich war (HTTP/1.1 200 OK) und dass der Server Apache/2.4.29 (Ubuntu) verwendet wird
+
+Das bedeutet, dass die Verbindung erfolgreich hergestellt wurde und der Server eine positive Antwort (HTTP-Statuscode 200 OK) zurückgegeben hat. Außerdem zeigt der Servername "Apache/2.4.29 (Ubuntu)" an, dass der verwendete Server die Apache-Version 2.4.29 unter Ubuntu ist.
 
 # Startseite
 
 Um auf die generierte Umgebung zugreifen zu können öffnet man http://localhost:3346
 
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/13641ac1-b6ec-4a77-ae86-58e247418cc7)
+
+# Adminer
+Bei der Umgebung, habe ich eine MYSQL Datenbank mit Adminer erstellen lassen. bei öffnen der Seite erscheint erstmal eine Login Seite
+
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/b8c147a1-26ac-4bf4-b51d-2e3611d37449)
+
+Wenn man sich mit den im VAGRANT-File definierten Anmeldedaten erfolgreich eingelogt hat, sieht man den ganzen Datenbank inhalt. 
+
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/0aa3d36c-228b-4d50-b6b5-dd19f50c75c1)
+
+# OPcache
+Um immer ein Auge auf den Leistungs-Verbrauch zu haben, kann man die zweite Seite öffnen, eine Ressource Monitoring Page die mit dem Service OPcache erstellt wurde. 
+
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/1e4b4827-9a06-41ae-8a01-89eb74dd964a)
 
 # Endstand 
 Das Skript erstellt ein Umbuntu Client worauf diverse Dienste laufen. Es wird ein Apache Service kreirt der auf https://localhost:3446 läuft. Darauf findet man eine Übersicht von zum einen ein Monitoring Service und ein Adminer SQL Datenbank. Zudem werden ein normaler User und ein Root User erstellt. Im hintergrund werden zusätzlich einige Security Features wie Firewall Rules & Reverse Proxy. Am Ende wird an der Konsole die benötigte Deploy Zeit ausgegeben und man kann ich auf die Umgebung verbinden. 
