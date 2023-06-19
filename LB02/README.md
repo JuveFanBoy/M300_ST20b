@@ -313,4 +313,17 @@ $ sudo ufw allow out 22/tcp
 
 # Reflexion
 
+Tag 1
+Der erste Tag war ein eher Theoretischer Tag. Herr Roht, hat uns die VM Nutzung der Zukunft vorgestellt. Um dies auch selber nutzen zu können, haben wir VAGRANT installiert und Virtual Box, da diese eine offene Schnittstelle hat. Danach haben wir angefangen mit Gitlab Aufträge zu lösen. Dies fand ich schon cool, da es die Vorbereitung auf eine automatisierte Umgebung war. Im allgemeinen bin ich schon sehr fasziniert von Skripten und es macht mir auch sehr viel Spass. Die Aufträge des Nachmittag gelangen mir gut und ich freute mich auf die Zukünftigen Tage. 
 
+Tag 2
+Heute wurde wir das erste mal in die LB02 eingeführt. Herr Rohr erklärte uns, was genau das Ziel war und wie wir es erreichen könnten. Dies gefiel mir gut, da er uns viele Freiheiten liess für eigene Vorschläge und Kreativität. Danach began ich das erste mal mich ins Vagrant Thema einzulesen. mir gelang es die erste Basic Konfiguration der VM zu erstellen mit custom VM-Name und auch zugeteilte Ressourcen. Danach tüftelte ich weiter am SSH Zugriff, der leider immer noch nicht ganz funktionierte. 
+
+Tag 3
+Nach 2 Wochen Pause, da Pfingsten dazwischen lag, brauchte ich mich noch ein bisschen einzulese bis ich wieder voll dabei war. Da ich in der Freizeit auch noch ein bisschen Zeit reinsteckte, musste ich lediglich den Wissenstand vor ein paar Tagen wieder aufholen. Im Unterricht sprachen wir über das Thema Sicherheit. Hierfür waren vor allem, Firewall Regeln und Reverse-Proxy wichtig. Nach dem interessanten Input wandte ich mich wieder meinem Skript zu. Ich baute die Firewall Regeln ein und plötzlich funktionierte der SSH Zugriff nicht mehr. Mir war bewusst, dass es an den Firewall Rules läge, jedoch war ich mir nicht bewusst welche IP ich bei der ALLOW SSH Rule eingeben sollte. 
+
+Tag 4
+Nach einigem Nachforschen, habe ich nun endlich die Richtige IP gefunden und der SSH Zugriff steht wieder. Zudem, hatte ich ein zweites grosses Problem was die Installation von nötigen Applikations-Paketen blockierte. Dies konnte ich unterdessen auch fixen, indem ich eine Zeile löschte, die das blockieren von unnötigen Ports vorsieht. Der rest vom Tag konnten wir weiter an unseren Skripts arbeiten. Ich installierte OPcache auf meinem Apache Server für das Monitoring und baute weitere Features ein.
+
+Tag 5
+Heute war 
