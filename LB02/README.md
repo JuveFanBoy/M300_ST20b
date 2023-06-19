@@ -326,4 +326,4 @@ Tag 4
 Nach einigem Nachforschen, habe ich nun endlich die Richtige IP gefunden und der SSH Zugriff steht wieder. Zudem, hatte ich ein zweites grosses Problem was die Installation von nötigen Applikations-Paketen blockierte. Dies konnte ich unterdessen auch fixen, indem ich eine Zeile löschte, die das blockieren von unnötigen Ports vorsieht. Der rest vom Tag konnten wir weiter an unseren Skripts arbeiten. Ich installierte OPcache auf meinem Apache Server für das Monitoring und baute weitere Features ein.
 
 Tag 5
-Heute war 
+Heute war der Abgabeterming. Da ich noch sehr viel zuhause arbeitete und nun alles vollständig funktionierte, hatte ich keine Zweifel. Ich dokumentierte also noch den Rest der Zeit die heute zur verfügung stand. Danach gab ich ein bisschen später um ca 16:00 ab und war zufrieden mit meiner LB02. Ich bin gespannt auf die nächste LB. 
