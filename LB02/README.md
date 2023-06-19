@@ -303,11 +303,11 @@ $ sudo ufw allow out 22/tcp
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/e4ae43c6-2be1-4508-a9ad-f45a5e5d7e13)
 
 # Wissenszuwachs
-*Vagrant kennengelernt
-*VM Konfiguration per Skript
-*Portforwarding Zugriff per Host
-*Firewall und Reverse Proxy auf Ubuntu Maschine
-*Automatisierung einer Umgebung per Skript
+* Vagrant kennengelernt
+* VM Konfiguration per Skript
+* Portforwarding Zugriff per Host
+* Firewall und Reverse Proxy auf Ubuntu Maschine
+* Automatisierung einer Umgebung per Skript
 
 
 
