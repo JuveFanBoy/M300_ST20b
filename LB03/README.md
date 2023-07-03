@@ -25,7 +25,8 @@ Im Modul 300 geht es darum, eine Service Umgebung völlig automatisiert zu erste
 # Systemumgebung
 Um sich die Umgebung besser Vorstellen zu können: 
 
-![M300_Systemumgebung](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/9a771739-2d7b-4b1e-9677-7870d9ace3bb)
+![M300_Systemumgebung](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/8fb43627-5b87-4c8d-b107-dd010828d000)
+
 
 Um auf die erstellte Umgebung Zugreifen zu können, kann ich auf dem Host-System https://localhost:3346 öffnen. 
 
