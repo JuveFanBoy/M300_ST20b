@@ -1,0 +1,242 @@
+#Erstellung VM 
+time_zone = "Europe/Zurich"
+
+Vagrant.configure("2") do |config| # Konfiguration der Vagrant-Box
+  config.vm.box = "generic/ubuntu1804" # Verwendet die Ubuntu 18.04-Box
+  config.vm.network "forwarded_port", guest: 3446, host: 3446, auto_correct: true # Weiterleitungsport von 80 auf 3446
+  config.vm.network "forwarded_port", guest: 80, host: 3445, auto_correct: true # Weiterleitungsport von 80 auf 3446
+
+  config.ssh.forward_agent = true
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox", # Synchronisiere das aktuelle Verzeichnis mit dem /vagrant-Verzeichnis in der VM
+  owner: "www-data", group: "www-data" # Gruppen und Benutzer die Folder festlegen
+
+  config.vm.provider "virtualbox" do |vb| # Provider Konfiguration
+    vb.name = "M300_LB03_Leandro" # VM Name
+    vb.memory = 3072 # RAM in MB
+    vb.cpus = 4 # Anzahl Prozessoren
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000]
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+  end
+
+config.vm.provision "shell" do |s|
+    s.args = [time_zone]
+    s.inline = <<-SHELL  
+
+#Erstellung Zeitstempel für Zeittracking
+deploy_start_time=$(date +%s)
+
+sudo timedatectl set-timezone Europe/Zurich
+apt-get update -q # Updated ganzes System
+
+#Firewall 
+sudo apt-get install -y ufw 
+sudo ufw --force enable
+sudo ufw allow from 10.0.2.2 to any port 22   # Port 22 (SSH) nur für den Host (wo die VM laufen) öffnen 
+sudo ufw allow 80    # Port 80 (HTTP) öffnen für alle
+sudo ufw status
+sudo systemctl start ssh
+
+#Sonstige Programme
+apt-get install -q -y vim git # Vim und Git installieren ins /var/www
+apt-get install -q -y apache2 # Installieren weiterer Software
+apt-get install -q -y php7.2 libapache2-mod-php7.2
+apt-get install -q -y php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php7.2-xml php7.2-zip php7.2-bz2 php7.2-intl
+apt-get install -q -y mariadb-server mariadb-client
+apt-get install -y ldap-utils
+a2enmod rewrite headers
+ldapsearch -x -LLL -H ldap://your-ldap-server -D "cn=admin,dc=example,dc=com" -w yourpassword -b "ou=users,dc=example,dc=com" "(objectclass=*)" cn email
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod proxy_balancer
+sudo a2enmod lbmethod_byrequests
+sudo systemctl restart apache2
+
+#Erstellung Benutzer Leandro 
+sudo useradd -m -s /bin/bash leandro  
+echo 'leandro:Admin1234!' | sudo chpasswd  
+
+#Erstellung neuer ROOT User
+sudo useradd -m -s /bin/bash leandro-root
+echo 'leandro-root:Admin1234!' | sudo chpasswd
+sudo usermod -aG sudo leandro-root
+
+# Dateiberechtigungen festlegen
+sudo chown -R leandro:www-data /var/www/html
+sudo chmod -R 755 /var/www/html 
+
+# SSH-Zugriff für den Benutzer aktivieren
+sudo mkdir /home/leandro/.ssh  
+sudo cp /root/.ssh/authorized_keys /home/leandro/.ssh/  
+sudo chown -R leandro:leandro /home/leandro/.ssh 
+sudo chmod 700 /home/leandro/.ssh 
+sudo chmod 600 /home/leandro/.ssh/authorized_keys
+
+# Optional: SSH-Zugriff für den Benutzer über Passwort aktivieren
+sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config  # Passwortauthentifizierung aktivieren
+sudo systemctl restart sshd  
+
+# Vagrant-Ordner als Apache-Root-Ordner festlegen und lokal speichern
+dir='/vagrant/www'
+if [ ! -d "$dir" ]; then
+  mkdir "$dir"
+fi
+if [ ! -L /var/www/html ]; then
+  rm -rf /var/www/html
+  ln -fs "$dir" /var/www/html
+fi
+cd "$dir"
+
+file='/etc/apache2/sites-available/dev.conf'
+if [ ! -f "$file" ]; then
+  SITE_CONF=$(cat <<EOF
+<Directory /var/www/html>
+  AllowOverride All
+  Options +Indexes -MultiViews +FollowSymLinks
+  AddDefaultCharset utf-8
+  SetEnv ENVIRONMENT "development"
+  php_flag display_errors On
+  EnableSendfile Off
+</Directory>
+EOF
+)
+  echo "$SITE_CONF" > "$file"
+fi
+a2ensite dev
+sudo touch /etc/apache2/sites-available/reverse-proxy.conf
+sudo bash -c 'cat > /etc/apache2/sites-available/reverse-proxy.conf << EOL
+<VirtualHost *:80>
+    ServerName reverse-proxy.example.com
+
+    ProxyPreserveHost On
+
+    # Weiterleitung zu Vaultwarden auf Port 3445
+    ProxyPass /vaultwarden http://localhost:3445
+    ProxyPassReverse /vaultwarden http://localhost:3445
+
+    # Weiterleitung zu anderen Diensten auf Port 80
+    ProxyPass /opcache http://localhost
+    ProxyPassReverse /opcache http://localhost
+    ProxyPass /adminer http://localhost
+    ProxyPassReverse /adminer http://localhost
+    ProxyPass /phpadmin http://localhost
+    ProxyPassReverse /phpadmin http://localhost
+</VirtualHost>
+
+
+EOL'
+
+# Vhost aktivieren
+sudo a2ensite reverse-proxy.conf
+
+# Apache neustarten
+sudo service apache2 restart
+
+# Composer installieren
+EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+ACTUAL_SIGNATURE="$(php -r "echo hash_file('SHA384', 'composer-setup.php');")"
+if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; then
+  >&2 echo 'ERROR: Invalid installer signature (Composer)'
+  rm composer-setup.php
+else
+  php composer-setup.php --quiet
+  rm composer-setup.php
+  mv composer.phar /usr/local/bin/composer
+  chmod +x /usr/local/bin/composer
+  sudo -H -u vagrant bash -c 'composer global require hirak/prestissimo'
+fi
+
+# phpinfo script 
+file='phpinfo.php'
+if [ ! -f "$file" ]; then
+  echo '<?php phpinfo();' > "$file"
+fi
+# OPcache gui script herunterladen von Webseite
+file='opcache.php'
+if [ ! -f "$file" ]; then
+  wget -nv -O "$file" https://raw.githubusercontent.com/amnuts/opcache-gui/master/index.php
+fi
+# Adminer script herunterladen von Webseite
+file='adminer.php'
+if [ ! -f "$file" ]; then
+  wget -nv -O "$file" http://www.adminer.org/latest.php
+  wget -nv https://raw.githubusercontent.com/vrana/adminer/master/designs/pepa-linha/adminer.css
+fi
+# Installiren von node, npm, bower, yarn und Webseiteninhalt anzeigen
+apt-get install curl
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+apt-get install -y nodejs
+npm install -g bower
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt-get update && sudo apt-get install yarn
+
+#Login für Adminer fürs GUI
+sudo mysql <<-EOF
+  create user 'leandro'@'localhost' identified by 'Admin1234!';
+  Grant all privileges on *.* to 'leandro'@'localhost';
+  Flush privileges;
+EOF
+
+echo "-----------------------------------------------------------------
+DOCKER WIRD INSTALLIERT!
+-----------------------------------------------------------------"
+# Docker Installation
+sudo apt-get install -q -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update -q
+sudo apt-get install -q -y docker-ce docker-ce-cli containerd.io
+
+# Docker Compose Installation
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Docker Benutzergruppe hinzufügen
+sudo usermod -aG docker leandro
+
+# VAULTWARDEN SERVICE INSTALLATION
+sudo mkdir /opt/vaultwarden
+
+
+cd /opt/vaultwarden
+# Vaultwarden Container starten
+
+sudo bash -c 'cat > /opt/vaultwarden/docker-compose.yaml << EOL
+
+version: '\''3'\'' 
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    ports:
+      - 3446:80
+    environment:
+      - ROCKET_PORT=80
+      - ROCKET_WORKERS=10
+    volumes:
+      - ./data:/data
+EOL'
+
+cd /opt/vaultwarden && sudo docker-compose up -d
+
+#Erstellung Abgeschlossen
+echo "-------------------------------------------------------------"
+echo "
+Umgebung wurde erfolgreich generiert!
+Die User "leandro" und "leandro-root" wurden erstellt."
+
+sudo apt-get -y -q install bc
+
+#Ausgabe benötigte Zeit 
+deploy_end_time=$(date +%s)
+      deploy_duration=$((deploy_end_time - deploy_start_time))
+      minutes=$((deploy_duration / 60 + 1 ))
+      seconds=$((deploy_duration % 60))
+      echo "Deploy-Zeit: $minutes Minuten $seconds Sekunden"
+
+SHELL
+  end
+end
