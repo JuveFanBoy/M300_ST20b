@@ -202,10 +202,8 @@ sudo mkdir /opt/vaultwarden
 
 cd /opt/vaultwarden
 # Vaultwarden Container starten
-
-sudo bash -c 'cat > /opt/vaultwarden/docker-compose.yaml << EOL
-
-version: '\''3'\'' 
+sudo touch /opt/vaultwarden/docker-compose.yaml
+sudo echo "version: '3' 
 services:
   vaultwarden:
     image: vaultwarden/server:latest
@@ -217,9 +215,9 @@ services:
       - ROCKET_PORT=80
       - ROCKET_WORKERS=10
     volumes:
-      - ./data:/data
-EOL'
+      - ./data:/data"| sudo tee /opt/vaultwarden/docker-compose.yaml
 
+cat /opt/vaultwarden/docker-compose.yaml
 cd /opt/vaultwarden && sudo docker-compose up -d
 
 #Erstellung Abgeschlossen
