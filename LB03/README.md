@@ -280,9 +280,16 @@ Das bedeutet, dass die Verbindung erfolgreich hergestellt wurde und der Server e
 
 # Startseite
 
-Um auf die generierte Umgebung zugreifen zu können öffnet man http://localhost:3346
+Um auf die generierte Umgebung zugreifen zu können öffnet man den Localhost auf einem gewissen Port: 
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/bb5130c6-4f38-49d0-9cc4-a2c1d2a4151d)
 
+
+Für den Apache Server mit der Datenbank und dem Ressource Monitoring Service öffnet man http://localhost:3445
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/13641ac1-b6ec-4a77-ae86-58e247418cc7)
+
+Um den Vaultwarden Service, der auf Docker basiert zu öffnen, nutz man den Port: 3446 http://localhost:3446
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/0c42d8cf-50a8-414c-8e0d-e495c4fcdbcf)
+
 
 # Adminer
 Bei der Umgebung, habe ich eine MYSQL Datenbank mit Adminer erstellen lassen. bei öffnen der Seite erscheint erstmal eine Login Seite
@@ -297,6 +304,60 @@ Wenn man sich mit den im VAGRANT-File definierten Anmeldedaten erfolgreich einge
 Um immer ein Auge auf den Leistungs-Verbrauch zu haben, kann man die zweite Seite öffnen, eine Ressource Monitoring Page die mit dem Service OPcache erstellt wurde. 
 
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/1e4b4827-9a06-41ae-8a01-89eb74dd964a)
+
+
+# Docker
+
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/1ac1aba0-a76f-403e-8b0b-3002a233b71e)
+
+Ich wollte, am ende der LB03 nur 1 File haben, welches alles automatisiert installiert. Darum entschied ich mich Docker auf der bereits vorhanden Ubuntu VM zu installieren. 
+Nach ein paar testing versuchen, hat sich Docker auf der Ubuntu VM installieren lassen. 
+
+```
+# Docker Installation
+sudo apt-get install -q -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update -q
+sudo apt-get install -q -y docker-ce docker-ce-cli containerd.io
+
+# Docker Compose Installation
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Docker Benutzergruppe hinzufügen
+sudo usermod -aG docker leandro
+```
+
+
+# Vaultwarden 
+
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/7b2fa039-cc9d-41e2-ae81-092ed0dca623)
+
+Um seine Passwörter sicher bei sich Localgehostet, und doch immer Zugriffsbereit zu haben, habe ich den Vaultwarden Passwort Manger eingerichtet. Da ich Bitwarden, welches die extern gehostete Version des Passwort Manager darstellt schon privat nutzte, schien mir dies für die perfekte möglichkeit zu versuchen alles Lokal zu verlagern. Auf einem GitHub Repository, fand ich schliesslich das Image: 
+
+```
+version: '3' 
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    ports:
+      - 3446:80
+    environment:
+      - ROCKET_PORT=80
+      - ROCKET_WORKERS=10
+    volumes:
+      - ./data:/data
+```
+Wenn ich den Service nun starte, sehe ich ihn unter den Docker Prozessen: 
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/14c23009-b3a8-4eaa-83d2-7c49570b2118)
+
+Wenn ich mich nun Anmelde, habe ich diese Startseite vor mir. Aktuell hat Sie noch keine Passwort Einträge. Ausserdem, weisst sie grosse ähnlichkeit mit Bitwarden auf: 
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/d2992cfc-bf04-4221-9d8b-3b011a58deed)
+
+
 
 # Endstand 
 Das Skript erstellt ein Umbuntu Client worauf diverse Dienste laufen. Es wird ein Apache Service kreirt der auf https://localhost:3446 läuft. Darauf findet man eine Übersicht von zum einen ein Monitoring Service und ein Adminer SQL Datenbank. Zudem werden ein normaler User und ein Root User erstellt. Im hintergrund werden zusätzlich einige Security Features wie Firewall Rules & Reverse Proxy. Am Ende wird an der Konsole die benötigte Deploy Zeit ausgegeben und man kann ich auf die Umgebung verbinden. 
