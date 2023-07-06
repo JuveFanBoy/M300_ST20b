@@ -46,14 +46,25 @@ Nach etwa 5 min ist die Umgebung kreirt und man kann im Gitbash per SSH zugreife
 $ Vagrant ssh
 ```
 
-Weitere wichtige Befehle sind: 
+Wichtige Vagrant Commands: 
 ```
-$ Vagrant status    #Status der VM
-$ Vagrant halt      #pausieren der VM
-$ Vagrant destory   #Löschen der VM
-$ sudo su -p        #Wechsel zu "Root" User
-$ sudo su <user>    #Wechsel zu beliebigem User
+$ Vagrant status    	#Status der VM
+$ Vagrant halt      	#Pausieren der VM
+$ Vagrant destory   	#Löschen der VM
+$ sudo su -p        	#Wechsel zu "Root" User
+$ sudo su <user>    	#Wechsel zu beliebigem User
+$ curl <url>		#Antwort einer Website abragen
 ```
+Wichtige Docker Commands: 
+```
+$ sudo docker ps -a 	#Laufende Docker Prozesse anzeigen
+$ docker stop <name>	#Stoppen eines vorhandenen Container
+$ docker rm <name>  	#Entfernen eines vorhandenen Container
+$ Vagrant destory   	#Löschen der VM
+$ sudo su -p        	#Wechsel zu "Root" User
+$ sudo su <user>    	#Wechsel zu beliebigem User
+```
+
 
 # VAGRANT-File
 ```
