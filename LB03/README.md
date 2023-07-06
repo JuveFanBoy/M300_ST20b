@@ -73,15 +73,17 @@ time_zone = "Europe/Zurich"
 
 Vagrant.configure("2") do |config| # Konfiguration der Vagrant-Box
   config.vm.box = "generic/ubuntu1804" # Verwendet die Ubuntu 18.04-Box
-  config.vm.network "forwarded_port", guest: 80, host: 3446, auto_correct: true # Weiterleitungsport von 80 auf 3446
+  config.vm.network "forwarded_port", guest: 3446, host: 3446, auto_correct: true # Weiterleitungsport von 80 auf 3446
+  config.vm.network "forwarded_port", guest: 80, host: 3445, auto_correct: true # Weiterleitungsport von 80 auf 3446
+
   config.ssh.forward_agent = true
   config.vm.synced_folder ".", "/vagrant", type: "virtualbox", # Synchronisiere das aktuelle Verzeichnis mit dem /vagrant-Verzeichnis in der VM
   owner: "www-data", group: "www-data" # Gruppen und Benutzer die Folder festlegen
 
   config.vm.provider "virtualbox" do |vb| # Provider Konfiguration
-    vb.name = "M300_LB02_Leandro" # VM Name
+    vb.name = "M300_LB03_Leandro" # VM Name
     vb.memory = 3072 # RAM in MB
-    vb.cpus = 3 # Anzahl Prozessoren
+    vb.cpus = 4 # Anzahl Prozessoren
     vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000]
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
@@ -174,11 +176,24 @@ a2ensite dev
 sudo touch /etc/apache2/sites-available/reverse-proxy.conf
 sudo bash -c 'cat > /etc/apache2/sites-available/reverse-proxy.conf << EOL
 <VirtualHost *:80>
-ProxyPreserveHost On
-ProxyPass / http://127.0.0.1:3446/
-ProxyPassReverse / http://127.0.0.1:3446/
-ServerName reverse-proxy.example.com
+    ServerName reverse-proxy.example.com
+
+    ProxyPreserveHost On
+
+    # Weiterleitung zu Vaultwarden auf Port 3445
+    ProxyPass /vaultwarden http://localhost:3445
+    ProxyPassReverse /vaultwarden http://localhost:3445
+
+    # Weiterleitung zu anderen Diensten auf Port 80
+    ProxyPass /opcache http://localhost
+    ProxyPassReverse /opcache http://localhost
+    ProxyPass /adminer http://localhost
+    ProxyPassReverse /adminer http://localhost
+    ProxyPass /phpadmin http://localhost
+    ProxyPassReverse /phpadmin http://localhost
 </VirtualHost>
+
+
 EOL'
 
 # Vhost aktivieren
@@ -233,6 +248,47 @@ sudo mysql <<-EOF
   Grant all privileges on *.* to 'leandro'@'localhost';
   Flush privileges;
 EOF
+
+echo "-----------------------------------------------------------------
+DOCKER WIRD INSTALLIERT!
+-----------------------------------------------------------------"
+# Docker Installation
+sudo apt-get install -q -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update -q
+sudo apt-get install -q -y docker-ce docker-ce-cli containerd.io
+
+# Docker Compose Installation
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Docker Benutzergruppe hinzufügen
+sudo usermod -aG docker leandro
+
+# VAULTWARDEN SERVICE INSTALLATION
+sudo mkdir /opt/vaultwarden
+
+
+cd /opt/vaultwarden
+# Vaultwarden Container starten
+sudo touch /opt/vaultwarden/docker-compose.yaml
+sudo echo "version: '3' 
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    ports:
+      - 3446:80
+    environment:
+      - ROCKET_PORT=80
+      - ROCKET_WORKERS=10
+    volumes:
+      - ./data:/data"| sudo tee /opt/vaultwarden/docker-compose.yaml
+
+cat /opt/vaultwarden/docker-compose.yaml
+cd /opt/vaultwarden && sudo docker-compose up -d
 
 #Erstellung Abgeschlossen
 echo "-------------------------------------------------------------"
@@ -363,22 +419,21 @@ Wenn ich mich nun Anmelde, habe ich diese Startseite vor mir. Aktuell hat Sie no
 Das Skript erstellt ein Umbuntu Client worauf diverse Dienste laufen. Es wird ein Apache Service kreirt der auf https://localhost:3445 läuft. Darauf findet man eine Übersicht von zum einen ein Monitoring Service und ein Adminer SQL Datenbank. Ergänzt werden diese Dienste mit der Applikation Docker. Diese wird ebenfalls auf dem Ubuntu Client installiert worauf wiederum von einem .yaml File "Vaultwarden" als Docker Service gehostet wird. Diesen kann man per https://localhost:3446 erreichen
 
 # Aufgretene_Probleme
-1. Während der LB03 ist insgesamt nur ein grösseres Problem aufgetreten. Dieses jedoch, hat mich richtig Zeit gekostet. Es geht Darum, dass das Image richtig erkannt wird in der 1. Zeile:
+1. Während der LB03 ist insgesamt nur ein grösseres Problem aufgetreten. Dieses jedoch, hat mich richtig Zeit gekostet. Es geht Darum, dass das Image nicht richtig erkannt wurde. In der 1. Zeile sollte:
 ```
 version: '3' 
 ```
-stehen sollte. Jedoch hat das Ruby File die Apostroph bei jedem Versuch entfernt. Das Suspekte daran, dass wenn man genau diesen Command Manuell ausgeführt hat, die Apostroph blieben: 
+stehen. Jedoch hat das Ruby File die Apostroph bei jedem Versuch entfernt. Das Suspekte daran, dass wenn man genau diesen Command Manuell ausgeführt hat, sind die Apostrophs geblieben: 
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/a3dec2d3-8441-4a2a-95c7-7e25df39b579)
 
-Nach vielen versuchen und Fixing, habe ich schliesslich eine ganz andere Methode verwendet, bei dem die '' Vorhanden blieben: 
+Nach vielen versuchen und Fixing, habe ich schliesslich eine ganz andere Methode verwendet, bei dem die '' blieben.: 
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/8c749772-91e0-4c20-9a9d-c173a005ccde)
 
 # Wissenszuwachs
 * Docker praktisch kennengelernt
 * Docker Konfiguration per Skript
-* Portforwarding viel tiefer verstanden
-* Firewall und Reverse Proxy auf Ubuntu Maschine
-* Automatisierung einer Umgebung per Skript
+* Portforwarding (Reverse Proxy) viel tiefer verstanden
+* .yaml File struktur wier aufgefrischt
 
 
 
@@ -386,20 +441,12 @@ Nach vielen versuchen und Fixing, habe ich schliesslich eine ganz andere Methode
 
 Tag 1
 
-Der erste Tag war ein eher Theoretischer Tag. Herr Roht, hat uns die VM Nutzung der Zukunft vorgestellt. Um dies auch selber nutzen zu können, haben wir VAGRANT installiert und Virtual Box, da diese eine offene Schnittstelle hat. Danach haben wir angefangen mit Gitlab Aufträge zu lösen. Dies fand ich schon cool, da es die Vorbereitung auf eine automatisierte Umgebung war. Im allgemeinen bin ich schon sehr fasziniert von Skripten und es macht mir auch sehr viel Spass. Die Aufträge des Nachmittag gelangen mir gut und ich freute mich auf die Zukünftigen Tage. 
+Der erste Tag der LB03 hat heute erst um 16:00 für mich gestartet, da ich bis hierhin noch nicht 100% zufrieden mit meiner LB02 war, weshalb ich daran noch Arbeitete.  Da uns Herr Rohr schon zu begin des Nachmittags in das Modul eingeführt und die Aufgabe genauer erklärt war mir klar was ich zu tun hatte. Daraufhin habe ich Docker heruntergeladen und versucht irgendein Docker Container darauf zu installieren. Nach einigen Versuchen suchte ich im Internet, ob es möglich sei, Docker auf Ubuntu zu installieren. Ich hatte zwar keine Zeit mehr weiteres zu probieren, jedoch hatte ich eine Antwort auf meine Frage und habe mir gewisse Ziele für die nächste Lektion vorgenommen.
 
 Tag 2
 
-Heute wurde wir das erste mal in die LB02 eingeführt. Herr Rohr erklärte uns, was genau das Ziel war und wie wir es erreichen könnten. Dies gefiel mir gut, da er uns viele Freiheiten liess für eigene Vorschläge und Kreativität. Danach began ich das erste mal mich ins Vagrant Thema einzulesen. mir gelang es die erste Basic Konfiguration der VM zu erstellen mit custom VM-Name und auch zugeteilte Ressourcen. Danach tüftelte ich weiter am SSH Zugriff, der leider immer noch nicht ganz funktionierte. 
+Als mir diese Frage beantwortet wurde, fing in direkt damit an, meine schon Vorhandene Maschine  zu erweitern. Ich habe Docker zuerst Manuell auf der Maschine aufgesetzt und als die Installation funktionierte, entschied ich mich für ein Service. Da ich privat schon einmal versucht habe Vaultwarden (die Lokale Version von Bitwarden) aufzusetzten und leider daran gescheitert bin, nahm ich mir dieses Ziel erneut vor. Nach Nachforschungen und einigen Stunden, habe ich Vaultwarden in den letzten 5 Minuten nun zum laufen gebracht. Was mir bei der Manuellen installation die grösste Schwierigkeit darstellte, war das ganze Port Forwarding, da ich zuerst nicht verstand wie ich alles weiterleiten sollte. 
 
 Tag 3
 
-Nach 2 Wochen Pause, da Pfingsten dazwischen lag, brauchte ich mich noch ein bisschen einzulese bis ich wieder voll dabei war. Da ich in der Freizeit auch noch ein bisschen Zeit reinsteckte, musste ich lediglich den Wissenstand vor ein paar Tagen wieder aufholen. Im Unterricht sprachen wir über das Thema Sicherheit. Hierfür waren vor allem, Firewall Regeln und Reverse-Proxy wichtig. Nach dem interessanten Input wandte ich mich wieder meinem Skript zu. Ich baute die Firewall Regeln ein und plötzlich funktionierte der SSH Zugriff nicht mehr. Mir war bewusst, dass es an den Firewall Rules läge, jedoch war ich mir nicht bewusst welche IP ich bei der ALLOW SSH Rule eingeben sollte. 
-
-Tag 4
-
-Nach einigem Nachforschen, habe ich nun endlich die Richtige IP gefunden und der SSH Zugriff steht wieder. Zudem, hatte ich ein zweites grosses Problem was die Installation von nötigen Applikations-Paketen blockierte. Dies konnte ich unterdessen auch fixen, indem ich eine Zeile löschte, die das blockieren von unnötigen Ports vorsieht. Der rest vom Tag konnten wir weiter an unseren Skripts arbeiten. Ich installierte OPcache auf meinem Apache Server für das Monitoring und baute weitere Features ein.
-
-Tag 5
-
-Heute war der Abgabeterming. Da ich noch sehr viel zuhause arbeitete und nun alles vollständig funktionierte, hatte ich keine Zweifel. Ich dokumentierte also noch den Rest der Zeit die heute zur verfügung stand. Danach gab ich ein bisschen später um ca 16:00 ab und war zufrieden mit meiner LB02. Ich bin gespannt auf die nächste LB. 
+Heute war es soweit. Ich habe mir vorgenommen heute 1 Woche vor Abgabe die LB03 abzuschliessen. In der Zeit von letzter Woche bis heute, habe ich alles von letzter Woche ins Ruby abgeschrieben. Soweit funktionierte alles, bis auf den angegebenen error mit dem Version '3'. Also entschied ich nmich nicht von zuhause aus zu arbeiten, sondern in der Schule zu bleiben und den Bug weiter zu fixen. Da ich dies schon min. 1-2h zuhause probierte, machte ich mir nicht viel Hoffnung, da manuell ja alles funktionierte. Danach entschied ich mich, dass gesamte erstellen des .yaml File zu löschen und es neu zu erstellen. Dies funktionierte erstaulicher weise gut. Der Bug war also gefixt und das Skript funktionierte komplett automatisiert. 
