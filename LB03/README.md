@@ -310,7 +310,7 @@ Um immer ein Auge auf den Leistungs-Verbrauch zu haben, kann man die zweite Seit
 
 ![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/1ac1aba0-a76f-403e-8b0b-3002a233b71e)
 
-Ich wollte, am ende der LB03 nur 1 File haben, welches alles automatisiert installiert. Darum entschied ich mich Docker auf der bereits vorhanden Ubuntu VM zu installieren. 
+Mein Ziel war es, die vollständige LB03 in einem einzelnen File zu haben, welches alles automatisiert installiert. Darum entschied ich mich Docker auf der bereits vorhanden Ubuntu VM zu installieren. 
 Nach ein paar testing versuchen, hat sich Docker auf der Ubuntu VM installieren lassen. 
 
 ```
@@ -360,25 +360,23 @@ Wenn ich mich nun Anmelde, habe ich diese Startseite vor mir. Aktuell hat Sie no
 
 
 # Endstand 
-Das Skript erstellt ein Umbuntu Client worauf diverse Dienste laufen. Es wird ein Apache Service kreirt der auf https://localhost:3446 läuft. Darauf findet man eine Übersicht von zum einen ein Monitoring Service und ein Adminer SQL Datenbank. Zudem werden ein normaler User und ein Root User erstellt. Im hintergrund werden zusätzlich einige Security Features wie Firewall Rules & Reverse Proxy. Am Ende wird an der Konsole die benötigte Deploy Zeit ausgegeben und man kann ich auf die Umgebung verbinden. 
+Das Skript erstellt ein Umbuntu Client worauf diverse Dienste laufen. Es wird ein Apache Service kreirt der auf https://localhost:3445 läuft. Darauf findet man eine Übersicht von zum einen ein Monitoring Service und ein Adminer SQL Datenbank. Ergänzt werden diese Dienste mit der Applikation Docker. Diese wird ebenfalls auf dem Ubuntu Client installiert worauf wiederum von einem .yaml File "Vaultwarden" als Docker Service gehostet wird. Diesen kann man per https://localhost:3446 erreichen
 
 # Aufgretene_Probleme
-1. SSH Connection, da falsche IP in der SSH Rule Angegeben
-Zu  beginn, war ich nicht sicher welche IP ich in der SSH Rule angeben musste. Nach gewissen rechechier-arbeiten, habe ich herausgefunden welche IP ich allowen soll.
-```sudo ufw allow from 10.0.2.2 to any port 22```
+1. Während der LB03 ist insgesamt nur ein grösseres Problem aufgetreten. Dieses jedoch, hat mich richtig Zeit gekostet. Es geht Darum, dass das Image richtig erkannt wird in der 1. Zeile:
+```
+version: '3' 
+```
+stehen sollte. Jedoch hat das Ruby File die Apostroph bei jedem Versuch entfernt. Das Suspekte daran, dass wenn man genau diesen Command Manuell ausgeführt hat, die Apostroph blieben: 
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/a3dec2d3-8441-4a2a-95c7-7e25df39b579)
 
-2. Ausgehende Verbindung Rule blockiert installation von Programmen
-Beim durchgehen und konfigurieren der Firewall Rules, traten auf einmal Fehler bei der Installation von Services Auf. Daraufhin ging ich erstmalig davon aus, dass gewisse downloadslinks oder commands geändert haben. Nach langem testing und rumprobieren, kam ich zu dem Entschluss das es an diesen Rules läge. Ein gutes beispiel wenn man den wald vor lauter bäumen nicht sieht. 
-```
-$ sudo ufw deny out to any
-$ sudo ufw allow out 22/tcp 
-```
-![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/e4ae43c6-2be1-4508-a9ad-f45a5e5d7e13)
+Nach vielen versuchen und Fixing, habe ich schliesslich eine ganz andere Methode verwendet, bei dem die '' Vorhanden blieben: 
+![image](https://github.com/JuveFanBoy/M300_ST20b/assets/60262192/8c749772-91e0-4c20-9a9d-c173a005ccde)
 
 # Wissenszuwachs
-* Vagrant kennengelernt
-* VM Konfiguration per Skript
-* Portforwarding Zugriff per Host
+* Docker praktisch kennengelernt
+* Docker Konfiguration per Skript
+* Portforwarding viel tiefer verstanden
 * Firewall und Reverse Proxy auf Ubuntu Maschine
 * Automatisierung einer Umgebung per Skript
 
